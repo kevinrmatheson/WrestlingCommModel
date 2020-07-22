@@ -185,8 +185,9 @@ Wrestlers['S_COMM'] = [round(a*b, 2) for a,b in zip(s_comm, CommWeight)]
 #Wrestlers['S_COMM'] = s_comm
 Wrestlers['C_COMM'] = c_comm
 Wrestlers['Recent Open Percent'] = RecentOpen
-
-Wrestlers.to_csv('Wrestling_Comm_Scores_6-01-20.csv')
+path = 'C:\\Users\\Kevin\\Downloads'### change this path to yours
+###Wrestlers.to_csv(path+'Wrestling_Comm_Scores_6-01-20.csv',index = False) use this code to output to the path you specified with the name in this line
+Wrestlers.to_csv('Wrestling_Comm_Scores_6-01-20.csv')###currently this saves the output to the same folder this code is in.
 #Below is just a vizualization
 """
 N = 40
