@@ -3,9 +3,10 @@ import numpy as np
 import re
 from collections import Counter
 import matplotlib.pyplot as plt
-data = pd.read_csv(r"C:\Users\Kevin\Downloads\MASTER_COMM_LIST.csv") #Just make sure using most recent file
+data = pd.read_csv(r"C:\Users\Kevin\Downloads\MASTER_COMM_LIST.csv") #Just make sure using most recent file, make sure to change your  path
 data = data.iloc[:,[0,1,2,3,4,6]]
-###TODO: Make sure to reorder the data by LAST NAME###
+### Make sure to reorder the data by LAST NAME###
+### CHANGE THE CURRENT DATE HERE ###
 year = 2020
 mo = 6
 day = 22
@@ -67,6 +68,9 @@ voice = [Communications[row]['Voice Mail'] for row in range(people)]
 offcon = [Communications[row]['Off-Campus Contact'] for row in range(people)]
 eval = [Communications[row]['Evaluation'] for row in range(people)]
 post = [Communications[row]['Postal Mail'] for row in range(people)]
+###If a new type of comm needs to be introduced, use the following code:
+### comm_type = [Communications[row]['Comm_Name'] for row in range(people)]
+### the you'll need to update a few indicies as well...
 recent_opens =  [rec_comms[row]['Email Opened'] for row in range(people)]
 recent_nopens = [rec_comms[row]['Email Not Opened'] for row in range(people)]
 # Go through all your raw data
@@ -90,12 +94,13 @@ recent_nopens = [rec_comms[row]['Email Not Opened'] for row in range(people)]
 ###Data seems odd, it must be that Incoming calls are calls from students, but Incoming mail is mail sent from Dubuque
 ###Dataframe of names with their comm statistics
 Wrestlers = pd.DataFrame({'Name': names, 'Opened_Email': opens, 'Not_Opened_Email': nopens, 'SMS': smss, 'Outgoing_Calls': outcall, 'Incoming_Email': inmail, 'Outgoing_Email': outmail, 'Incoming_Call': incall, 'On-Campus Visit': visits, 'General': general, 'Voice Mail': voice, 'Off-Campus Contact' : offcon, 'Evaluation' : eval, 'Postal Mail' : post})
-
+### Here there will need to be new comm names added if you want additional types of comms
 #Student Comm Score for individual comms: +1 for email opened * 1/Time, +3 for email sent or text * 1/Time, +5 for call *1/Time, +10 for visit. -1 for email not opened
 #Coach Comm Score for individual comms:  +1 for each email sent, +3 text * 1/Time, +5 for call * 1/Time
 tot_cont = Wrestlers.sum(axis = 1, numeric_only = True)
 tot_cont_root = tot_cont**.5
-for item in range(data.shape[0]):
+###Here are the linear points for each type of communication. Just change the values that are currently 0, 1, 3 or 5 currently
+for item in range(data.shape[0]):###dont change this 0
   old = (data['Last_Comm'][item]) >= 30
   if data['Contact_Type'][item] == 'Email Opened': #+1 Student and Coach
     S_Comm[item] = (1  - old)
@@ -110,7 +115,7 @@ for item in range(data.shape[0]):
     S_Comm[item] = ( 1 - old)
     C_Comm[item] = (1 - old)
   if data['Contact_Type'][item] == 'Incoming Call': #Student Only
-    S_Comm[item] = (5 - old*2.5)
+    S_Comm[item] = (5 - old*2.5)###this 2.5 is a weight the penalizes older comms
     C_Comm[item] = (0)
   if data['Contact_Type'][item] == 'Incoming Email': #Student Only
     S_Comm[item] = (3 - old)
@@ -120,13 +125,13 @@ for item in range(data.shape[0]):
     C_Comm[item] = (0)
   if data['Contact_Type'][item] == 'Outgoing Call': #Coach Only
     S_Comm[item] = (0)
-    C_Comm[item] = (5 - old*3)
+    C_Comm[item] = (5 - old*3)###this 3 is a weight the penalizes older comms
   if data['Contact_Type'][item] == 'Outgoing Email': #Coach Only
     S_Comm[item] = (0)
     C_Comm[item] = (3 - old)
   if data['Contact_Type'][item] == 'Voice Mail': #Coach Only
     S_Comm[item] = (0)
-    C_Comm[item] = (5 - old*3)
+    C_Comm[item] = (5 - old*3)###this 3 is a weight the penalizes older comms
 data['S_Comm'] = S_Comm
 data['C_Comm'] = C_Comm
 
